@@ -22,7 +22,7 @@ return [
     'New users will automatically be added to these space(s).' => '',
     'Wall entry layout' => '',
     'You\'re using no logo at the moment. Upload your logo now.' => '',
-    'Dashboard' => 'ダッシュボード',
+    'Dashboard' => 'タイムライン',
     'Delete' => '削除',
     'E.g. http://example.com/humhub' => '例）http://example.com/humhub',
     'Save' => '保存',

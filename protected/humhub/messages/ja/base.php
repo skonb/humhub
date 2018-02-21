@@ -36,7 +36,7 @@ return [
     'An unknown error occurred while uploading.' => 'アップロード中に不明なエラーが発生しました。',
     'An unknown error occurred while uploading. Hint: check your upload_max_filesize and post_max_size php settings.' => 'アップロード中に不明なエラーが発生しました。 ヒント：upload_max_filesizeとpost_max_size PHP設定を確認してください。',
     'Back' => '戻る',
-    'Back to dashboard' => 'ダッシュボードへ戻る',
+    'Back to dashboard' => 'タイムラインへ戻る',
     'Cancel' => 'キャンセル',
     'Choose language:' => '言語を選択:',
     'Close' => '閉じる',
