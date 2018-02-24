@@ -27,7 +27,7 @@ class RichText extends JsWidget
     public $text = "";
 
     /**
-     * @var string original text before parsed 
+     * @var string original text before parsed
      */
     public $originalText = "";
 
@@ -74,6 +74,7 @@ class RichText extends JsWidget
             $this->text = Html::encode($this->text);
         }
 
+
         if (!$this->minimal && !$this->edit) {
             $this->translateOmbed();
 
@@ -83,6 +84,7 @@ class RichText extends JsWidget
             }, $this->text);
         }
 
+        $this->text = self::convertHashtags($this->text);
         // get user and space details from guids
         $this->text = self::translateMentioning($this->text, ($this->minimal) ? false : true);
 
@@ -95,6 +97,7 @@ class RichText extends JsWidget
 
         $this->text = trim($this->text);
 
+
         if (!$this->minimal) {
             $output = nl2br($this->text);
         } else {
@@ -102,7 +105,7 @@ class RichText extends JsWidget
         }
 
         // replace leading spaces with no break spaces to keep the text format
-        $output = preg_replace_callback('/^( +)/m', function($m) {
+        $output = preg_replace_callback('/^( +)/m', function ($m) {
             return str_repeat("&nbsp;", strlen($m[1]));
         }, $output);
 
@@ -166,7 +169,7 @@ REGEXP;
             "PoultryLeg", "Party", "Cake", "Sun", "Fire", "Heart"
         );
 
-        return preg_replace_callback('@;(\w*?);@', function($hit) use(&$show, &$emojis) {
+        return preg_replace_callback('@;(\w*?);@', function ($hit) use (&$show, &$emojis) {
             if (in_array($hit[1], $emojis)) {
                 if ($show) {
                     return Html::img(Yii::getAlias("@web-static/img/emoji/" . $hit[1] . ".svg"), array('data-emoji-name' => $hit[0], 'data-richtext-feature' => '', 'data-guid' => "@-emoji" . $hit[0], 'class' => 'atwho-emoji', 'width' => '18', 'height' => '18', 'alt' => $hit[1]));
@@ -185,7 +188,7 @@ REGEXP;
      */
     public static function translateMentioning($text, $buildAnchors = true)
     {
-        return preg_replace_callback('@\@\-([us])([\w\-]*?)($|[\.,:;\'"!\?\s])@', function($hit) use(&$buildAnchors) {
+        return preg_replace_callback('@\@\-([us])([\w\-]*?)($|[\.,:;\'"!\?\s])@', function ($hit) use (&$buildAnchors) {
             if ($hit[1] == 'u') {
                 $user = \humhub\modules\user\models\User::findOne(['guid' => $hit[2]]);
                 if ($user !== null) {
@@ -206,6 +209,19 @@ REGEXP;
             }
             return $hit[0];
         }, $text);
+    }
+
+    public static function convertHashtags($text)
+    {
+        return preg_replace_callback(
+            '/#([\w]+)/',  // all "word" characters, all digits, and underscore
+            // brackets around the string AFTER the hashtag
+            function ($hit) {
+                // $matches[0] is the complete match (including the hashtag)
+                // $matches[1] is the match for the subpattern enclosed in brackets
+                return '[' . $hit[0] . '](' . 'http://localhost:8080/index.php?r=' . Html::encode('search/search/index') .
+                    '&' . Html::encode('SearchForm[keyword]') . '=' . strtolower($hit[1]) . ')';
+            }, $text);
     }
 
 }
